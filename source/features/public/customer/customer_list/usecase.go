@@ -13,7 +13,7 @@ type ListFilter struct {
 }
 
 type ListResponse struct {
-	Data      []models.CustomerModel `json:"data"`
+	Customer  []models.CustomerModel `json:"customers"`
 	Total     int64                  `json:"total"`
 	Page      int                    `json:"page"`
 	Limit     int                    `json:"limit"`

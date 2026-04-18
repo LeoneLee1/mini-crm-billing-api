@@ -14,7 +14,7 @@ type ListFilter struct {
 }
 
 type ListResponse struct {
-	Data      []models.ProductModel `json:"data"`
+	Product   []models.ProductModel `json:"products"`
 	Total     int64                 `json:"total"`
 	Page      int                   `json:"page"`
 	Limit     int                   `json:"limit"`

@@ -14,7 +14,7 @@ func (u *usecaseImpl) List(ctx context.Context, filter ListFilter) (*ListRespons
 	totalPage := int(math.Ceil(float64(total) / float64(filter.Limit)))
 
 	return &ListResponse{
-		Data:      products,
+		Product:   products,
 		Total:     total,
 		Page:      filter.Page,
 		Limit:     filter.Limit,
