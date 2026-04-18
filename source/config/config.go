@@ -19,6 +19,11 @@ type Config struct {
 	DBName string
 
 	JWTSecret string
+
+	RedisHost string
+	RedisPort string
+	RedisPass string
+	RedisDB   string
 }
 
 func readVersionFile() string {
@@ -45,5 +50,10 @@ func Load() *Config {
 		DBName: os.Getenv("DB_NAME"),
 
 		JWTSecret: os.Getenv("JWT_SECRET"),
+
+		RedisHost: os.Getenv("REDIS_HOST"),
+		RedisPort: os.Getenv("REDIS_PORT"),
+		RedisPass: os.Getenv("REDIS_PASSWORD"),
+		RedisDB:   os.Getenv("REDIS_DB"),
 	}
 }
