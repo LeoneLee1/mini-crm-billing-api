@@ -19,68 +19,55 @@ func GetSecretKey() []byte {
 }
 
 type JWTClaim struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Nik     string `json:"nik"`
-	Jabatan string `json:"jabatan"`
-	Divisi  string `json:"divisi"`
-	Role    string `json:"role"`
-	Type    string `json:"type"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+	Type  string `json:"type"`
 	jwt.RegisteredClaims
 }
 
-func CreateAccessToken(ID string, Name string, Nik string, Jabatan string, Divisi string, Role string) (string, error) {
-	expirationTime := time.Now().Add(24 * time.Hour)
-
+func CreateAccessToken(id, name, email, role string) (string, error) {
 	claims := &JWTClaim{
-		ID:      ID,
-		Name:    Name,
-		Nik:     Nik,
-		Jabatan: Jabatan,
-		Divisi:  Divisi,
-		Role:    Role,
-		Type:    "access",
+		ID:    id,
+		Name:  name,
+		Email: email,
+		Role:  role,
+		Type:  "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(GetSecretKey())
 }
 
-func CreateRefreshToken(ID string) (string, error) {
-	expirationTime := time.Now().Add(30 * 24 * time.Hour)
-
+func CreateRefreshToken(id string) (string, error) {
 	claims := &JWTClaim{
-		ID:   ID,
+		ID:   id,
 		Type: "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(GetSecretKey())
 }
 
 func VerifyToken(tokenString string) (*JWTClaim, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaim{}, func(t *jwt.Token) (interface{}, error) {
-
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-
 		return GetSecretKey(), nil
 	})
 
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
 			if token != nil {
-				claims, ok := token.Claims.(*JWTClaim)
-				if ok {
+				if claims, ok := token.Claims.(*JWTClaim); ok {
 					return claims, errors.New("token expired")
 				}
 			}
@@ -102,17 +89,15 @@ func GetCurrentUser(c *gin.Context) (*JWTClaim, bool) {
 	if !exists {
 		return nil, false
 	}
-
 	jwtClaims, ok := userValue.(*JWTClaim)
 	return jwtClaims, ok
 }
 
 func GetCurrentUserID(c *gin.Context) (string, bool) {
-	userIDValue, exists := c.Get("id")
+	userID, exists := c.Get("id")
 	if !exists {
 		return "", false
 	}
-
-	userID, ok := userIDValue.(string)
-	return userID, ok
+	id, ok := userID.(string)
+	return id, ok
 }

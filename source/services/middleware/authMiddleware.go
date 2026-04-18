@@ -19,9 +19,8 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		claims, err := jwtutils.VerifyToken(tokenString)
-
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "token expired"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 			return
 		}
@@ -34,9 +33,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		c.Set("id", claims.ID)
 		c.Set("name", claims.Name)
-		c.Set("nik", claims.Nik)
-		c.Set("jabatan", claims.Jabatan)
-		c.Set("divisi", claims.Divisi)
+		c.Set("email", claims.Email)
 		c.Set("role", claims.Role)
 
 		c.Next()
