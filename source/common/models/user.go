@@ -7,19 +7,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type RoleAccess string
-
-const (
-	RoleStaff RoleAccess = "staff"
-	RoleAdmin RoleAccess = "admin"
-)
-
 type UserModel struct {
-	ID       uuid.UUID  `gorm:"primaryKey;type:char(36)" json:"id"`
-	Name     string     `gorm:"type:varchar(255)" json:"name"`
-	Email    string     `gorm:"type:varchar(255);uniqueIndex" json:"email"`
-	Password string     `gorm:"type:varchar(255)" json:"-"`
-	Role     RoleAccess `gorm:"type:varchar(100)" json:"role"`
+	ID       uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
+	Name     string    `gorm:"type:varchar(255);not null" json:"name"`
+	Email    string    `gorm:"type:varchar(255);uniqueIndex;not null" json:"email"`
+	Password string    `gorm:"type:varchar(255);not null" json:"-"`
+	Role     string    `gorm:"type:varchar(100);not null;default:staff" json:"role"`
 
 	CreatedAt time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"autoUpdateTime" json:"updated_at"`

@@ -1,16 +1,19 @@
 package health
 
 import (
+	"context"
 	"mini-crm-billing-api/source/config"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 type Handler struct {
-	db *gorm.DB
+	db    *gorm.DB
+	redis *redis.Client
 }
 
 type healthResponse struct {
@@ -19,10 +22,11 @@ type healthResponse struct {
 	Time       time.Time `json:"timestamp"`
 	AppVersion string    `json:"app_version"`
 	DB         string    `json:"db"`
+	Redis      string    `json:"redis"`
 }
 
-func CheckHealth(db *gorm.DB) *Handler {
-	return &Handler{db: db}
+func CheckHealth(db *gorm.DB, redisClient *redis.Client) *Handler {
+	return &Handler{db: db, redis: redisClient}
 }
 
 var (
@@ -30,32 +34,30 @@ var (
 )
 
 func (h *Handler) Check(c *gin.Context) {
+	dbStatus := "up"
+	redisStatus := "up"
+	overall := "OK"
+
 	sqlDB, err := h.db.DB()
-	if err != nil {
-		c.JSON(http.StatusServiceUnavailable, healthResponse{
-			Status:     "Unhealthy",
-			DB:         "not connected",
-			AppName:    cfg.AppName,
-			Time:       time.Now(),
-			AppVersion: cfg.AppVersion,
-		})
-		return
+	if err != nil || sqlDB.Ping() != nil {
+		dbStatus = "down"
+		overall = "Unhealthy"
 	}
 
-	if err := sqlDB.Ping(); err != nil {
-		c.JSON(http.StatusServiceUnavailable, healthResponse{
-			Status:     "Unhealthy",
-			DB:         "dow",
-			AppName:    cfg.AppName,
-			Time:       time.Now(),
-			AppVersion: cfg.AppVersion,
-		})
-		return
+	if h.redis == nil || h.redis.Ping(context.Background()).Err() != nil {
+		redisStatus = "down"
+		overall = "Unhealthy"
 	}
 
-	c.JSON(http.StatusOK, healthResponse{
-		Status:     "OK",
-		DB:         "up",
+	statusCode := http.StatusOK
+	if overall != "OK" {
+		statusCode = http.StatusServiceUnavailable
+	}
+
+	c.JSON(statusCode, healthResponse{
+		Status:     overall,
+		DB:         dbStatus,
+		Redis:      redisStatus,
 		AppName:    cfg.AppName,
 		Time:       time.Now(),
 		AppVersion: cfg.AppVersion,

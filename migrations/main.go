@@ -1,6 +1,7 @@
 package main
 
 import (
+	"mini-crm-billing-api/source/common/models"
 	"mini-crm-billing-api/source/config"
 	"mini-crm-billing-api/source/pkg/db"
 	"mini-crm-billing-api/source/pkg/logger"
@@ -17,21 +18,19 @@ func main() {
 	}
 	logger.Log.Info().Msg("Running database migration...")
 
-	if err := dbConn.AutoMigrate(); err != nil {
+	if err := dbConn.AutoMigrate(
+		&models.UserModel{},
+		&models.RefreshTokenModel{},
+		&models.LogActivityModel{},
+		&models.CustomerModel{},
+		&models.ProductModel{},
+		&models.TransactionModel{},
+		&models.TransactionItemModel{},
+		&models.InvoiceModel{},
+		&models.PaymentModel{},
+	); err != nil {
 		logger.Log.Fatal().Msg("Migration failed")
 	}
-
-	dbConn.Exec(`
-		ALTER TABLE absences
-		MODIFY clock_in TIME,
-		MODIFY clock_out TIME NULL;
-	`)
-
-	dbConn.Exec(`
-		ALTER TABLE booking_rooms
-		MODIFY start TIME,
-		MODIFY end TIME;
-	`)
 
 	logger.Log.Info().Msg("Migration success")
 }

@@ -9,6 +9,11 @@ DB_NAME=mini_crm_db
 
 JWT_SECRET=your-super-secret-jwt-key
 
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_DB=
+
 MIDTRANS_SERVER_KEY=
 MIDTRANS_CLIENT_KEY=
 MIDTRANS_ENV=sandbox
