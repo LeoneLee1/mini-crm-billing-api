@@ -14,6 +14,11 @@ import (
 	productgetbyid "mini-crm-billing-api/source/features/public/product/product_get_by_id"
 	productlist "mini-crm-billing-api/source/features/public/product/product_list"
 	productupdate "mini-crm-billing-api/source/features/public/product/product_update"
+	transactioncreate "mini-crm-billing-api/source/features/public/transaction/transaction_create"
+	transactionlist "mini-crm-billing-api/source/features/public/transaction/transaction_list"
+	transactionupdate "mini-crm-billing-api/source/features/public/transaction/transaction_update"
+	transactiondelete "mini-crm-billing-api/source/features/public/transaction/transaction_delete"
+	transactionupdatestatus "mini-crm-billing-api/source/features/public/transaction/transaction_update_status"
 	"mini-crm-billing-api/source/services/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -56,4 +61,13 @@ func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	product.GET("/:id", productgetbyid.NewHandler(r.db))
 	product.PUT("/:id", productupdate.NewHandler(r.db))
 	product.DELETE("/:id", productdelete.NewHandler(r.db))
+
+	// Transaction (protected)
+	transaction := routeGroup.Group("/transactions")
+	transaction.Use(middleware.AuthMiddleware())
+	transaction.GET("", transactionlist.NewHandler(r.db))
+	transaction.POST("", transactioncreate.NewHandler(r.db))
+	transaction.PUT("/:id", transactionupdate.NewHandler(r.db))
+	transaction.PATCH("/:id/status", transactionupdatestatus.NewHandler(r.db))
+	transaction.DELETE("/:id", transactiondelete.NewHandler(r.db))
 }
