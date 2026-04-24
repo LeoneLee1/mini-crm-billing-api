@@ -5,6 +5,7 @@ import (
 	"mini-crm-billing-api/source/features/public/auth/profile"
 	profileupdate "mini-crm-billing-api/source/features/public/auth/profile_update"
 	"mini-crm-billing-api/source/features/public/auth/register"
+	updatepassword "mini-crm-billing-api/source/features/public/auth/update_password"
 	customercreate "mini-crm-billing-api/source/features/public/customer/customer_create"
 	customerdelete "mini-crm-billing-api/source/features/public/customer/customer_delete"
 	customergetbyid "mini-crm-billing-api/source/features/public/customer/customer_get_by_id"
@@ -45,6 +46,7 @@ func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	authProtected.Use(middleware.AuthMiddleware())
 	authProtected.GET("/profile", profile.NewHandler(r.db))
 	authProtected.PUT("/profile/update", profileupdate.NewHandler(r.db))
+	authProtected.PUT("/profile/update-password", updatepassword.NewHandler(r.db))
 
 	// Customer (protected)
 	customer := routeGroup.Group("/customers")
