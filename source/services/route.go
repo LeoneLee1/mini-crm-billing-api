@@ -3,6 +3,7 @@ package services
 import (
 	"mini-crm-billing-api/source/features/public/auth/login"
 	"mini-crm-billing-api/source/features/public/auth/profile"
+	profileupdate "mini-crm-billing-api/source/features/public/auth/profile_update"
 	"mini-crm-billing-api/source/features/public/auth/register"
 	customercreate "mini-crm-billing-api/source/features/public/customer/customer_create"
 	customerdelete "mini-crm-billing-api/source/features/public/customer/customer_delete"
@@ -15,9 +16,9 @@ import (
 	productlist "mini-crm-billing-api/source/features/public/product/product_list"
 	productupdate "mini-crm-billing-api/source/features/public/product/product_update"
 	transactioncreate "mini-crm-billing-api/source/features/public/transaction/transaction_create"
+	transactiondelete "mini-crm-billing-api/source/features/public/transaction/transaction_delete"
 	transactionlist "mini-crm-billing-api/source/features/public/transaction/transaction_list"
 	transactionupdate "mini-crm-billing-api/source/features/public/transaction/transaction_update"
-	transactiondelete "mini-crm-billing-api/source/features/public/transaction/transaction_delete"
 	transactionupdatestatus "mini-crm-billing-api/source/features/public/transaction/transaction_update_status"
 	"mini-crm-billing-api/source/services/middleware"
 
@@ -43,6 +44,7 @@ func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	authProtected := routeGroup.Group("/auth")
 	authProtected.Use(middleware.AuthMiddleware())
 	authProtected.GET("/profile", profile.NewHandler(r.db))
+	authProtected.PUT("/profile/update", profileupdate.NewHandler(r.db))
 
 	// Customer (protected)
 	customer := routeGroup.Group("/customers")

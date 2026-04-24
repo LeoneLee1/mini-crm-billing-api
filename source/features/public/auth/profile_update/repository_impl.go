@@ -1,0 +1,21 @@
+package profileupdate
+
+import (
+	"context"
+	"mini-crm-billing-api/source/common/models"
+)
+
+// findByID implements [Repository].
+func (r *repositoryImpl) findByID(ctx context.Context, id string) (*models.UserModel, error) {
+	var user models.UserModel
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// updateProfile implements [Repository].
+func (r *repositoryImpl) updateProfile(ctx context.Context, id string, user *models.UserModel) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Updates(user).Error
+}
