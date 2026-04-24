@@ -3,7 +3,6 @@ package profileupdate
 import (
 	"context"
 	"errors"
-	hashingpassword "mini-crm-billing-api/source/common/glob_utils/hashing_password"
 	"mini-crm-billing-api/source/common/models"
 
 	"gorm.io/gorm"
@@ -19,15 +18,9 @@ func (u *usecaseImpl) update(ctx context.Context, id string, req updateRequest) 
 		return nil, err
 	}
 
-	hashedPassword, err := hashingpassword.HashPassword(req.Password)
-	if err != nil {
-		return nil, err
-	}
-
 	userModel := &models.UserModel{
-		Name:     req.Name,
-		Email:    req.Email,
-		Password: hashedPassword,
+		Name:  req.Name,
+		Email: req.Email,
 	}
 	if err := u.repo.updateProfile(ctx, id, userModel); err != nil {
 		return nil, err

@@ -23,9 +23,8 @@ func (h *Handler) Impl(c *gin.Context) {
 	}
 
 	user, err := h.usecase.update(c.Request.Context(), id, updateRequest{
-		Name:     req.Name,
-		Email:    req.Email,
-		Password: req.Password,
+		Name:  req.Name,
+		Email: req.Email,
 	})
 	if err != nil {
 		msg := err.Error()

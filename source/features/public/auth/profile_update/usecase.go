@@ -18,7 +18,6 @@ func injectUsecase(repo Repository) Usecase {
 }
 
 type updateRequest struct {
-	Name     string `json:"name"`
-	Email    string `jsom:"email"`
-	Password string `json:"password"`
+	Name  string `json:"name"`
+	Email string `jsom:"email"`
 }
