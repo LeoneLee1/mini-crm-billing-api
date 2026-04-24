@@ -1,4 +1,4 @@
-package profileupdate
+package updatepassword
 
 import (
 	httpresputils "mini-crm-billing-api/source/common/glob_utils/http_resp_utils"
@@ -22,9 +22,10 @@ func (h *Handler) Impl(c *gin.Context) {
 		return
 	}
 
-	user, err := h.usecase.update(c.Request.Context(), id, updateRequest{
-		Name:  req.Name,
-		Email: req.Email,
+	err := h.usecase.update(c.Request.Context(), id, updateRequest{
+		OldPassword:     req.OldPassword,
+		NewPassword:     req.NewPassword,
+		ConfirmPassword: req.ConfirmPassword,
 	})
 	if err != nil {
 		msg := err.Error()
@@ -36,6 +37,6 @@ func (h *Handler) Impl(c *gin.Context) {
 		return
 	}
 
-	msg := "Profile updated"
-	httpresputils.HttpRespOK(c, user, nil, &msg)
+	msg := "Password updated"
+	httpresputils.HttpRespOK(c, nil, nil, &msg)
 }
