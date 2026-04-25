@@ -1,4 +1,4 @@
-package customerlist
+package userlist
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 )
 
 func (u *usecaseImpl) List(ctx context.Context, filter ListFilter) (*ListResponse, error) {
-	customers, total, err := u.repo.List(ctx, filter.Search, filter.Status, filter.RequesterID, filter.RequesterRole, filter.Page, filter.Limit)
+	users, total, err := u.repo.List(ctx, filter.Search, filter.Role, filter.Page, filter.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +14,7 @@ func (u *usecaseImpl) List(ctx context.Context, filter ListFilter) (*ListRespons
 	totalPage := int(math.Ceil(float64(total) / float64(filter.Limit)))
 
 	return &ListResponse{
-		Customer:  customers,
+		Users:     users,
 		Total:     total,
 		Page:      filter.Page,
 		Limit:     filter.Limit,

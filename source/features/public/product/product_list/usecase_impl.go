@@ -6,7 +6,7 @@ import (
 )
 
 func (u *usecaseImpl) List(ctx context.Context, filter ListFilter) (*ListResponse, error) {
-	products, total, err := u.repo.List(ctx, filter.Search, filter.Category, filter.IsActive, filter.Page, filter.Limit)
+	products, total, err := u.repo.List(ctx, filter.Search, filter.Category, filter.RequesterID, filter.RequesterRole, filter.IsActive, filter.Page, filter.Limit)
 	if err != nil {
 		return nil, err
 	}

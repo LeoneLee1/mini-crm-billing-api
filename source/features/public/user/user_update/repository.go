@@ -1,4 +1,4 @@
-package customerlist
+package userupdate
 
 import (
 	"context"
@@ -8,7 +8,9 @@ import (
 )
 
 type Repository interface {
-	List(ctx context.Context, search, status, requesterID, requesterRole string, page, limit int) ([]models.CustomerModel, int64, error)
+	FindByID(ctx context.Context, id string) (*models.UserModel, error)
+	IsEmailTakenByOther(ctx context.Context, email, excludeID string) (bool, error)
+	UpdateUser(ctx context.Context, user *models.UserModel) error
 }
 
 type repositoryImpl struct {

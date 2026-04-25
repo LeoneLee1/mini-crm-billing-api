@@ -15,5 +15,14 @@ func (u *usecaseImpl) Delete(ctx context.Context, id string) error {
 		}
 		return err
 	}
+
+	hasTransactions, err := u.repo.HasTransactions(ctx, id)
+	if err != nil {
+		return err
+	}
+	if hasTransactions {
+		return errors.New("customer cannot be deleted because they have existing transactions")
+	}
+
 	return u.repo.DeleteCustomer(ctx, id)
 }

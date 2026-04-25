@@ -6,7 +6,6 @@ import (
 	"mini-crm-billing-api/source/config"
 	"mini-crm-billing-api/source/pkg/db"
 	"mini-crm-billing-api/source/pkg/logger"
-	pkgredis "mini-crm-billing-api/source/pkg/redis"
 	"mini-crm-billing-api/source/services"
 	"mini-crm-billing-api/source/services/middleware"
 	"net/http"
@@ -28,12 +27,12 @@ func main() {
 	}
 	logger.Info().Msg("Database connected")
 
-	redisClient, err := pkgredis.NewClient(cfg)
-	if err != nil {
-		logger.Error().Msg("Redis connection failed")
-		return
-	}
-	logger.Info().Msg("Redis connected")
+	// redisClient, err := pkgredis.NewClient(cfg)
+	// if err != nil {
+	// 	logger.Error().Msg("Redis connection failed")
+	// 	return
+	// }
+	// logger.Info().Msg("Redis connected")
 
 	gin.SetMode(gin.ReleaseMode)
 
@@ -51,7 +50,8 @@ func main() {
 	r.Use(gin.Recovery())
 
 	// HealthCheck /health
-	healthHandler := health.CheckHealth(dbConn, redisClient)
+	// healthHandler := health.CheckHealth(dbConn, redisClient)
+	healthHandler := health.CheckHealth(dbConn)
 	r.GET("/health", healthHandler.Check)
 
 	// Mounting routers

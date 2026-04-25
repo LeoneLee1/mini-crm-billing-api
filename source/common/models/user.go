@@ -7,6 +7,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRole string
+
+const (
+	UserRoleAdmin UserRole = "admin"
+	UserRoleStaff UserRole = "staff"
+)
+
 type UserModel struct {
 	ID       uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
 	Name     string    `gorm:"type:varchar(255);not null" json:"name"`

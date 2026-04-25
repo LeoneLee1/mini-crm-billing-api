@@ -13,7 +13,6 @@ type createRequest struct {
 	Price       float64 `json:"price" binding:"required,gt=0"`
 	Unit        string  `json:"unit" binding:"required"`
 	Category    string  `json:"category"`
-	IsActive    *bool   `json:"is_active"`
 }
 
 func (h *Handler) Impl(c *gin.Context) {
@@ -44,7 +43,6 @@ func (h *Handler) Impl(c *gin.Context) {
 		Price:       req.Price,
 		Unit:        req.Unit,
 		Category:    req.Category,
-		IsActive:    req.IsActive,
 	})
 	if err != nil {
 		msg := err.Error()

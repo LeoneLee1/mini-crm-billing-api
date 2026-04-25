@@ -5,8 +5,12 @@ import (
 	"mini-crm-billing-api/source/common/models"
 )
 
-func (r *repositoryImpl) List(ctx context.Context, search, status string, page, limit int) ([]models.CustomerModel, int64, error) {
+func (r *repositoryImpl) List(ctx context.Context, search, status, requesterID, requesterRole string, page, limit int) ([]models.CustomerModel, int64, error) {
 	query := r.db.WithContext(ctx).Model(&models.CustomerModel{})
+
+	if requesterRole == string(models.UserRoleStaff) {
+		query = query.Where("created_by = ?", requesterID)
+	}
 
 	if search != "" {
 		like := "%" + search + "%"

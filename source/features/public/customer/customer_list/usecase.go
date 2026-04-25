@@ -6,10 +6,12 @@ import (
 )
 
 type ListFilter struct {
-	Search string
-	Status string
-	Page   int
-	Limit  int
+	Search        string
+	Status        string
+	Page          int
+	Limit         int
+	RequesterID   string
+	RequesterRole string
 }
 
 type ListResponse struct {

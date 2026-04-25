@@ -1,4 +1,4 @@
-package customerlist
+package userdelete
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 )
 
 type Repository interface {
-	List(ctx context.Context, search, status, requesterID, requesterRole string, page, limit int) ([]models.CustomerModel, int64, error)
+	FindByID(ctx context.Context, id string) (*models.UserModel, error)
+	DeleteUser(ctx context.Context, id string) error
 }
 
 type repositoryImpl struct {

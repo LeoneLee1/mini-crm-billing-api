@@ -12,7 +12,6 @@ type createRequest struct {
 	Email   string `json:"email"`
 	Phone   string `json:"phone"`
 	Address string `json:"address"`
-	Status  string `json:"status"`
 }
 
 func (h *Handler) Impl(c *gin.Context) {
@@ -42,7 +41,6 @@ func (h *Handler) Impl(c *gin.Context) {
 		Email:   req.Email,
 		Phone:   req.Phone,
 		Address: req.Address,
-		Status:  req.Status,
 	})
 	if err != nil {
 		msg := err.Error()

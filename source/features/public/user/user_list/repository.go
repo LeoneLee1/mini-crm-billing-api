@@ -1,4 +1,4 @@
-package register
+package userlist
 
 import (
 	"context"
@@ -8,9 +8,7 @@ import (
 )
 
 type Repository interface {
-	FindByEmail(ctx context.Context, email string) (*models.UserModel, error)
-	CreateUser(ctx context.Context, user *models.UserModel) error
-	SaveRefreshToken(ctx context.Context, token *models.RefreshTokenModel) error
+	List(ctx context.Context, search, role string, page, limit int) ([]models.UserModel, int64, error)
 }
 
 type repositoryImpl struct {

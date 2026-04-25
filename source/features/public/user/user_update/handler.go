@@ -1,4 +1,4 @@
-package register
+package userupdate
 
 import (
 	"github.com/gin-gonic/gin"

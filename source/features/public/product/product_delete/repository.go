@@ -9,6 +9,7 @@ import (
 
 type Repository interface {
 	FindByID(ctx context.Context, id string) (*models.ProductModel, error)
+	IsUsedInTransactions(ctx context.Context, id string) (bool, error)
 	DeleteProduct(ctx context.Context, id string) error
 }
 

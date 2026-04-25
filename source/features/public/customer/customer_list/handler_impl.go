@@ -17,11 +17,16 @@ func (h *Handler) Impl(c *gin.Context) {
 		limit = 10
 	}
 
+	requesterID, _ := c.Get("id")
+	requesterRole, _ := c.Get("role")
+
 	result, err := h.usecase.List(c.Request.Context(), ListFilter{
-		Search: c.Query("search"),
-		Status: c.Query("status"),
-		Page:   page,
-		Limit:  limit,
+		Search:        c.Query("search"),
+		Status:        c.Query("status"),
+		Page:          page,
+		Limit:         limit,
+		RequesterID:   requesterID.(string),
+		RequesterRole: requesterRole.(string),
 	})
 	if err != nil {
 		msg := err.Error()

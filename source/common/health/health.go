@@ -1,19 +1,17 @@
 package health
 
 import (
-	"context"
 	"mini-crm-billing-api/source/config"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
 type Handler struct {
-	db    *gorm.DB
-	redis *redis.Client
+	db *gorm.DB
+	// redis *redis.Client
 }
 
 type healthResponse struct {
@@ -22,11 +20,13 @@ type healthResponse struct {
 	Time       time.Time `json:"timestamp"`
 	AppVersion string    `json:"app_version"`
 	DB         string    `json:"db"`
-	Redis      string    `json:"redis"`
+	// Redis      string    `json:"redis"`
 }
 
-func CheckHealth(db *gorm.DB, redisClient *redis.Client) *Handler {
-	return &Handler{db: db, redis: redisClient}
+// func CheckHealth(db *gorm.DB, redisClient *redis.Client) *Handler {
+func CheckHealth(db *gorm.DB) *Handler {
+	// return &Handler{db: db, redis: redisClient}
+	return &Handler{db: db}
 }
 
 var (
@@ -35,7 +35,7 @@ var (
 
 func (h *Handler) Check(c *gin.Context) {
 	dbStatus := "up"
-	redisStatus := "up"
+	// redisStatus := "up"
 	overall := "OK"
 
 	sqlDB, err := h.db.DB()
@@ -44,10 +44,10 @@ func (h *Handler) Check(c *gin.Context) {
 		overall = "Unhealthy"
 	}
 
-	if h.redis == nil || h.redis.Ping(context.Background()).Err() != nil {
-		redisStatus = "down"
-		overall = "Unhealthy"
-	}
+	// if h.redis == nil || h.redis.Ping(context.Background()).Err() != nil {
+	// 	redisStatus = "down"
+	// 	overall = "Unhealthy"
+	// }
 
 	statusCode := http.StatusOK
 	if overall != "OK" {
@@ -55,9 +55,9 @@ func (h *Handler) Check(c *gin.Context) {
 	}
 
 	c.JSON(statusCode, healthResponse{
-		Status:     overall,
-		DB:         dbStatus,
-		Redis:      redisStatus,
+		Status: overall,
+		DB:     dbStatus,
+		// Redis:      redisStatus,
 		AppName:    cfg.AppName,
 		Time:       time.Now(),
 		AppVersion: cfg.AppVersion,

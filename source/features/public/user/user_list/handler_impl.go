@@ -1,4 +1,4 @@
-package productlist
+package userlist
 
 import (
 	httpresputils "mini-crm-billing-api/source/common/glob_utils/http_resp_utils"
@@ -17,25 +17,11 @@ func (h *Handler) Impl(c *gin.Context) {
 		limit = 10
 	}
 
-	var isActive *bool
-	if v := c.Query("is_active"); v != "" {
-		b, err := strconv.ParseBool(v)
-		if err == nil {
-			isActive = &b
-		}
-	}
-
-	requesterID, _ := c.Get("id")
-	requesterRole, _ := c.Get("role")
-
 	result, err := h.usecase.List(c.Request.Context(), ListFilter{
-		Search:        c.Query("search"),
-		Category:      c.Query("category"),
-		IsActive:      isActive,
-		Page:          page,
-		Limit:         limit,
-		RequesterID:   requesterID.(string),
-		RequesterRole: requesterRole.(string),
+		Search: c.Query("search"),
+		Role:   c.Query("role"),
+		Page:   page,
+		Limit:  limit,
 	})
 	if err != nil {
 		msg := err.Error()

@@ -8,17 +8,12 @@ import (
 )
 
 func (u *usecaseImpl) Create(ctx context.Context, createdBy uuid.UUID, req CreateRequest) (*models.CustomerModel, error) {
-	status := req.Status
-	if status == "" {
-		status = "active"
-	}
-
 	customer := &models.CustomerModel{
 		Name:      req.Name,
 		Email:     req.Email,
 		Phone:     req.Phone,
 		Address:   req.Address,
-		Status:    status,
+		Status:    string(models.CustomerStatusActive),
 		CreatedBy: createdBy,
 	}
 

@@ -14,6 +14,15 @@ func (r *repositoryImpl) FindByID(ctx context.Context, id string) (*models.Produ
 	return &product, nil
 }
 
+func (r *repositoryImpl) IsUsedInTransactions(ctx context.Context, id string) (bool, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Model(&models.TransactionItemModel{}).Where("product_id = ?", id).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func (r *repositoryImpl) DeleteProduct(ctx context.Context, id string) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&models.ProductModel{}).Error
 }

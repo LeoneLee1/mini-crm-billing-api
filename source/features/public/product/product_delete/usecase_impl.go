@@ -15,5 +15,14 @@ func (u *usecaseImpl) Delete(ctx context.Context, id string) error {
 		}
 		return err
 	}
+
+	used, err := u.repo.IsUsedInTransactions(ctx, id)
+	if err != nil {
+		return err
+	}
+	if used {
+		return errors.New("product cannot be deleted because it has been used in transactions; consider deactivating it instead")
+	}
+
 	return u.repo.DeleteProduct(ctx, id)
 }

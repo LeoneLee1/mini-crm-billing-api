@@ -1,21 +1,19 @@
-package customercreate
+package usercreate
 
 import (
 	"context"
 	"mini-crm-billing-api/source/common/models"
-
-	"github.com/google/uuid"
 )
 
 type CreateRequest struct {
-	Name    string
-	Email   string
-	Phone   string
-	Address string
+	Name     string
+	Email    string
+	Password string
+	Role     string
 }
 
 type Usecase interface {
-	Create(ctx context.Context, createdBy uuid.UUID, req CreateRequest) (*models.CustomerModel, error)
+	Create(ctx context.Context, req CreateRequest) (*models.UserModel, error)
 }
 
 type usecaseImpl struct {

@@ -4,7 +4,6 @@ import (
 	"mini-crm-billing-api/source/features/public/auth/login"
 	"mini-crm-billing-api/source/features/public/auth/profile"
 	profileupdate "mini-crm-billing-api/source/features/public/auth/profile_update"
-	"mini-crm-billing-api/source/features/public/auth/register"
 	updatepassword "mini-crm-billing-api/source/features/public/auth/update_password"
 	customercreate "mini-crm-billing-api/source/features/public/customer/customer_create"
 	customerdelete "mini-crm-billing-api/source/features/public/customer/customer_delete"
@@ -21,6 +20,11 @@ import (
 	transactionlist "mini-crm-billing-api/source/features/public/transaction/transaction_list"
 	transactionupdate "mini-crm-billing-api/source/features/public/transaction/transaction_update"
 	transactionupdatestatus "mini-crm-billing-api/source/features/public/transaction/transaction_update_status"
+	usercreate "mini-crm-billing-api/source/features/public/user/user_create"
+	userdelete "mini-crm-billing-api/source/features/public/user/user_delete"
+	usergetbyid "mini-crm-billing-api/source/features/public/user/user_get_by_id"
+	userlist "mini-crm-billing-api/source/features/public/user/user_list"
+	userupdate "mini-crm-billing-api/source/features/public/user/user_update"
 	"mini-crm-billing-api/source/services/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +42,6 @@ func NewRouters(db *gorm.DB) *Routers {
 func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	// Auth public
 	auth := routeGroup.Group("/auth")
-	auth.POST("/register", register.NewHandler(r.db))
 	auth.POST("/login", login.NewHandler(r.db))
 
 	// Auth protected
@@ -74,4 +77,13 @@ func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	transaction.PUT("/:id", transactionupdate.NewHandler(r.db))
 	transaction.PATCH("/:id/status", transactionupdatestatus.NewHandler(r.db))
 	transaction.DELETE("/:id", transactiondelete.NewHandler(r.db))
+
+	// User management (admin only)
+	user := routeGroup.Group("/users")
+	user.Use(middleware.AuthMiddleware(), middleware.AdminMiddleware())
+	user.GET("", userlist.NewHandler(r.db))
+	user.POST("", usercreate.NewHandler(r.db))
+	user.GET("/:id", usergetbyid.NewHandler(r.db))
+	user.PUT("/:id", userupdate.NewHandler(r.db))
+	user.DELETE("/:id", userdelete.NewHandler(r.db))
 }

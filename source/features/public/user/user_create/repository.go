@@ -1,4 +1,4 @@
-package customerlist
+package usercreate
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 )
 
 type Repository interface {
-	List(ctx context.Context, search, status, requesterID, requesterRole string, page, limit int) ([]models.CustomerModel, int64, error)
+	IsEmailTaken(ctx context.Context, email string) (bool, error)
+	CreateUser(ctx context.Context, user *models.UserModel) error
 }
 
 type repositoryImpl struct {

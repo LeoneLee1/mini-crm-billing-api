@@ -8,7 +8,7 @@ import (
 )
 
 type Repository interface {
-	List(ctx context.Context, search, category string, isActive *bool, page, limit int) ([]models.ProductModel, int64, error)
+	List(ctx context.Context, search, category, requesterID, requesterRole string, isActive *bool, page, limit int) ([]models.ProductModel, int64, error)
 }
 
 type repositoryImpl struct {

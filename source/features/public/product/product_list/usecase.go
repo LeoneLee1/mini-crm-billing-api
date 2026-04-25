@@ -6,11 +6,13 @@ import (
 )
 
 type ListFilter struct {
-	Search   string
-	Category string
-	IsActive *bool
-	Page     int
-	Limit    int
+	Search        string
+	Category      string
+	IsActive      *bool
+	Page          int
+	Limit         int
+	RequesterID   string
+	RequesterRole string
 }
 
 type ListResponse struct {
