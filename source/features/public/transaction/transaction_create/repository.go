@@ -10,7 +10,7 @@ import (
 
 type Repository interface {
 	create(ctx context.Context, transaction *models.TransactionModel) error
-	customerByID(ctx context.Context, customerID uuid.UUID) error
+	customerByID(ctx context.Context, customerID uuid.UUID) (*models.CustomerModel, error)
 	productByID(ctx context.Context, productID uuid.UUID) (*models.ProductModel, error)
 	transactionByID(ctx context.Context, transactionID uuid.UUID) (*models.TransactionModel, error)
 }

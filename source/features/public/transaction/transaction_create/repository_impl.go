@@ -13,8 +13,13 @@ func (r *repositoryImpl) create(ctx context.Context, transaction *models.Transac
 }
 
 // customerByID implements [Repository].
-func (r *repositoryImpl) customerByID(ctx context.Context, customerID uuid.UUID) error {
-	return r.db.WithContext(ctx).Where("id = ?", customerID).First(&models.CustomerModel{}).Error
+func (r *repositoryImpl) customerByID(ctx context.Context, customerID uuid.UUID) (*models.CustomerModel, error) {
+	var customer models.CustomerModel
+	err := r.db.WithContext(ctx).Where("id = ?", customerID).First(&customer).Error
+	if err != nil {
+		return nil, err
+	}
+	return &customer, nil
 }
 
 // productByID implements [Repository].

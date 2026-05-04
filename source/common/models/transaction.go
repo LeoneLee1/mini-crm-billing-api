@@ -7,6 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type TransactionStatus string
+
+const (
+	TransactionDraft     TransactionStatus = "draft"
+	TransactionConfirmed TransactionStatus = "confirmed"
+	TransactionCancelled TransactionStatus = "cancelled"
+)
+
 type TransactionModel struct {
 	ID         uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
 	CustomerID uuid.UUID `gorm:"type:char(36)" json:"customer_id"`

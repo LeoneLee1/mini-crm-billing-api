@@ -17,9 +17,13 @@ func (u *usecaseImpl) create(ctx context.Context, req *body.TransactionRequest, 
 		return nil, errors.New("invalid customer id")
 	}
 
-	err = u.repo.customerByID(ctx, customerID)
+	customer, err := u.repo.customerByID(ctx, customerID)
 	if err != nil {
 		return nil, errors.New("customer not found")
+	}
+
+	if customer.Status != string(models.CustomerStatusActive) {
+		return nil, errors.New("customer is not active")
 	}
 
 	// build items and calculate subtotal
