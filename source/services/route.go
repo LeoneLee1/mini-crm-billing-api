@@ -10,6 +10,11 @@ import (
 	customergetbyid "mini-crm-billing-api/source/features/public/customer/customer_get_by_id"
 	customerlist "mini-crm-billing-api/source/features/public/customer/customer_list"
 	customerupdate "mini-crm-billing-api/source/features/public/customer/customer_update"
+	invoicecreate "mini-crm-billing-api/source/features/public/invoice/invoice_create"
+	invoicedelete "mini-crm-billing-api/source/features/public/invoice/invoice_delete"
+	invoicegetbyid "mini-crm-billing-api/source/features/public/invoice/invoice_get_by_id"
+	invoicelist "mini-crm-billing-api/source/features/public/invoice/invoice_list"
+	invoiceupdatestatus "mini-crm-billing-api/source/features/public/invoice/invoice_update_status"
 	productcreate "mini-crm-billing-api/source/features/public/product/product_create"
 	productdelete "mini-crm-billing-api/source/features/public/product/product_delete"
 	productgetbyid "mini-crm-billing-api/source/features/public/product/product_get_by_id"
@@ -77,6 +82,15 @@ func (r *Routers) MountRouters(routeGroup *gin.RouterGroup) {
 	transaction.PUT("/:id", transactionupdate.NewHandler(r.db))
 	transaction.PATCH("/:id/status", transactionupdatestatus.NewHandler(r.db))
 	transaction.DELETE("/:id", transactiondelete.NewHandler(r.db))
+
+	// Invoice (protected)
+	invoice := routeGroup.Group("/invoice")
+	invoice.Use(middleware.AuthMiddleware())
+	invoice.GET("", invoicelist.NewHandler(r.db))
+	invoice.POST("", invoicecreate.NewHandler(r.db))
+	invoice.GET("/:id", invoicegetbyid.NewHandler(r.db))
+	invoice.PATCH("/:id/status", invoiceupdatestatus.NewHandler(r.db))
+	invoice.DELETE("/:id", invoicedelete.NewHandler(r.db))
 
 	// User management (admin only)
 	user := routeGroup.Group("/users")
