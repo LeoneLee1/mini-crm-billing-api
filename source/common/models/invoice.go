@@ -7,11 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type InvoiceStatus string
+
+const (
+	InvoiceUnPaid  InvoiceStatus = "unpaid"
+	InvoicePaid    InvoiceStatus = "paid"
+	InvoiceOverdue InvoiceStatus = "overdue"
+)
+
 type InvoiceModel struct {
 	ID            uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
 	TransactionID uuid.UUID `gorm:"type:char(36);not null" json:"transaction_id"`
 	InvoiceNumber string    `gorm:"type:varchar(255);uniqueIndex;not null" json:"invoice_number"`
-	DueDate       time.Time `gorm:"not null" json:"due_date"`
+	DueDate       time.Time `gorm:"type:date;not null" json:"due_date"`
 	Status        string    `gorm:"type:varchar(20);not null;default:unpaid" json:"status"`
 	Notes         string    `gorm:"type:text" json:"notes"`
 
