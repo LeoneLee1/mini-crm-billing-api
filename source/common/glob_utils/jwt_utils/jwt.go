@@ -3,6 +3,7 @@ package jwtutils
 import (
 	"errors"
 	"fmt"
+	"mini-crm-billing-api/source/services/constant"
 	"os"
 	"time"
 
@@ -10,12 +11,16 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var secretKey []byte
+
 func GetSecretKey() []byte {
 	key := os.Getenv("JWT_SECRET")
 	if key == "" {
-		key = "default-secret-key"
+		panic("JWT_SECRET environment variable is not set")
 	}
-	return []byte(key)
+	secretKey = []byte(key)
+
+	return secretKey
 }
 
 type JWTClaim struct {
@@ -35,12 +40,12 @@ func CreateAccessToken(id, name, email, role string) (string, error) {
 		Role:  role,
 		Type:  "access",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Time(constant.JwtAccessTokenExpires)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(GetSecretKey())
+	return token.SignedString(secretKey)
 }
 
 func CreateRefreshToken(id string) (string, error) {
@@ -48,12 +53,12 @@ func CreateRefreshToken(id string) (string, error) {
 		ID:   id,
 		Type: "refresh",
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Time(constant.JwtRefreshTokenExpires)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(GetSecretKey())
+	return token.SignedString(secretKey)
 }
 
 func VerifyToken(tokenString string) (*JWTClaim, error) {
@@ -61,7 +66,7 @@ func VerifyToken(tokenString string) (*JWTClaim, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return GetSecretKey(), nil
+		return secretKey, nil
 	})
 
 	if err != nil {
@@ -78,7 +83,7 @@ func VerifyToken(tokenString string) (*JWTClaim, error) {
 
 	claims, ok := token.Claims.(*JWTClaim)
 	if !ok || !token.Valid {
-		return nil, errors.New("token tidak valid")
+		return nil, errors.New("invalid token")
 	}
 
 	return claims, nil
