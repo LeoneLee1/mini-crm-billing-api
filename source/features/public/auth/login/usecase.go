@@ -2,17 +2,13 @@ package login
 
 import (
 	"context"
-	"mini-crm-billing-api/source/common/models"
+	"mini-crm-billing-api/source/features/public/auth/login/body"
+
+	"gorm.io/gorm"
 )
 
-type LoginResponse struct {
-	AccessToken  string            `json:"access_token"`
-	RefreshToken string            `json:"refresh_token"`
-	User         *models.UserModel `json:"user"`
-}
-
 type Usecase interface {
-	Login(ctx context.Context, email, password string) (*LoginResponse, error)
+	Login(ctx context.Context, db *gorm.DB, email, password string) (*body.LoginResponse, error)
 }
 
 type usecaseImpl struct {
