@@ -2,11 +2,15 @@ package profileupdate
 
 import (
 	"context"
+	"errors"
 	"mini-crm-billing-api/source/common/models"
+	"mini-crm-billing-api/source/features/public/auth/profile_update/body"
 )
 
+var ErrUserNotFound = errors.New("user not found")
+
 type Usecase interface {
-	update(ctx context.Context, id string, req updateRequest) (*models.UserModel, error)
+	Update(ctx context.Context, userID string, req body.UpdateRequest) (*models.UserModel, error)
 }
 
 type usecaseImpl struct {
@@ -15,9 +19,4 @@ type usecaseImpl struct {
 
 func injectUsecase(repo Repository) Usecase {
 	return &usecaseImpl{repo: repo}
-}
-
-type updateRequest struct {
-	Name  string `json:"name"`
-	Email string `jsom:"email"`
 }

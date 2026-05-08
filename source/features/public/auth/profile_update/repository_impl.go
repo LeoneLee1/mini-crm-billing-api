@@ -2,20 +2,28 @@ package profileupdate
 
 import (
 	"context"
+	"errors"
 	"mini-crm-billing-api/source/common/models"
+	userrepo "mini-crm-billing-api/source/common/repository/user_repo"
+
+	"gorm.io/gorm"
 )
 
-// findByID implements [Repository].
-func (r *repositoryImpl) findByID(ctx context.Context, id string) (*models.UserModel, error) {
-	var user models.UserModel
-	err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
+// FindByEmail implements [Repository].
+func (r *repositoryImpl) FindByEmail(ctx context.Context, email string) (*models.UserModel, error) {
+	return userrepo.FindByEmail(ctx, r.db, email)
 }
 
-// updateProfile implements [Repository].
-func (r *repositoryImpl) updateProfile(ctx context.Context, id string, user *models.UserModel) error {
-	return r.db.WithContext(ctx).Where("id = ?", id).Updates(user).Error
+// FindByID implements [Repository].
+func (r *repositoryImpl) FindByID(ctx context.Context, userID string) (*models.UserModel, error) {
+	user, err := userrepo.FindByID(ctx, r.db, userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrUserNotFound
+	}
+	return user, err
+}
+
+// UpdateProfile implements [Repository].
+func (r *repositoryImpl) UpdateProfile(ctx context.Context, userID string, user *models.UserModel) error {
+	return r.db.WithContext(ctx).Where("id = ?", userID).Updates(user).Error
 }

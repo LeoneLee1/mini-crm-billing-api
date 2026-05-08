@@ -1,14 +1,10 @@
 package profile
 
 import (
-	"context"
-	"mini-crm-billing-api/source/common/models"
-
 	"gorm.io/gorm"
 )
 
 type Repository interface {
-	FindByID(ctx context.Context, id string) (*models.UserModel, error)
 }
 
 type repositoryImpl struct {

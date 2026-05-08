@@ -8,8 +8,9 @@ import (
 )
 
 type Repository interface {
-	findByID(ctx context.Context, id string) (*models.UserModel, error)
-	updateProfile(ctx context.Context, id string, profile *models.UserModel) error
+	FindByID(ctx context.Context, userID string) (*models.UserModel, error)
+	FindByEmail(ctx context.Context, email string) (*models.UserModel, error)
+	UpdateProfile(ctx context.Context, userID string, user *models.UserModel) error
 }
 
 type repositoryImpl struct {

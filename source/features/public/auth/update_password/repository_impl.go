@@ -2,20 +2,23 @@ package updatepassword
 
 import (
 	"context"
+	"errors"
 	"mini-crm-billing-api/source/common/models"
+	userrepo "mini-crm-billing-api/source/common/repository/user_repo"
+
+	"gorm.io/gorm"
 )
 
 // findByID implements [Repository].
-func (r *repositoryImpl) findByID(ctx context.Context, id string) (*models.UserModel, error) {
-	var user models.UserModel
-	err := r.db.WithContext(ctx).Where("id = ?", id).First(&user).Error
-	if err != nil {
-		return nil, err
+func (r *repositoryImpl) FindByID(ctx context.Context, userID string) (*models.UserModel, error) {
+	user, err := userrepo.FindByID(ctx, r.db, userID)
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, ErrUserNotFound
 	}
-	return &user, nil
+	return user, err
 }
 
 // updatePassword implements [Repository].
-func (r *repositoryImpl) updatePassword(ctx context.Context, id string, newPassword string) error {
-	return r.db.WithContext(ctx).Model(&models.UserModel{}).Where("id = ?", id).Update("password", newPassword).Error
+func (r *repositoryImpl) UpdatePassword(ctx context.Context, userID string, newPassword string) error {
+	return r.db.WithContext(ctx).Model(&models.UserModel{}).Where("id = ?", userID).Update("password", newPassword).Error
 }

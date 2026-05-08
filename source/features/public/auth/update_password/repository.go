@@ -8,8 +8,8 @@ import (
 )
 
 type Repository interface {
-	findByID(ctx context.Context, id string) (*models.UserModel, error)
-	updatePassword(ctx context.Context, id string, newPassword string) error
+	FindByID(ctx context.Context, userID string) (*models.UserModel, error)
+	UpdatePassword(ctx context.Context, userID string, newPassword string) error
 }
 
 type repositoryImpl struct {

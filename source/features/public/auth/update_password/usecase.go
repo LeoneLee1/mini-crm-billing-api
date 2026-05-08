@@ -1,9 +1,15 @@
 package updatepassword
 
-import "context"
+import (
+	"context"
+	"errors"
+	"mini-crm-billing-api/source/features/public/auth/update_password/body"
+)
+
+var ErrUserNotFound = errors.New("user not found")
 
 type Usecase interface {
-	update(ctx context.Context, id string, req updateRequest) error
+	Update(ctx context.Context, userID string, req body.UpdateRequest) error
 }
 
 type usecaseImpl struct {
@@ -12,10 +18,4 @@ type usecaseImpl struct {
 
 func injectUsecase(repo Repository) Usecase {
 	return &usecaseImpl{repo: repo}
-}
-
-type updateRequest struct {
-	OldPassword     string `json:"old_password"`
-	NewPassword     string `json:"new_password"`
-	ConfirmPassword string `json:"confirm_password"`
 }
