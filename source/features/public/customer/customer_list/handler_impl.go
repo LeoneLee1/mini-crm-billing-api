@@ -2,6 +2,9 @@ package customerlist
 
 import (
 	httpresputils "mini-crm-billing-api/source/common/glob_utils/http_resp_utils"
+	jwtutils "mini-crm-billing-api/source/common/glob_utils/jwt_utils"
+	"mini-crm-billing-api/source/common/models"
+	"mini-crm-billing-api/source/features/public/customer/customer_list/body"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -16,17 +19,32 @@ func (h *Handler) Impl(c *gin.Context) {
 	if limit < 1 {
 		limit = 10
 	}
+	if limit > 100 {
+		limit = 100
+	}
+	status := c.Query("status")
+	if status != "" && status != string(models.CustomerStatusActive) && status != string(models.CustomerStatusInActive) {
+		msg := "Invalid status value"
+		httpresputils.HttpRespBadRequest(c, &msg)
+		return
+	}
 
-	requesterID, _ := c.Get("id")
-	requesterRole, _ := c.Get("role")
+	userValue, exists := jwtutils.GetCurrentUser(c)
+	if !exists {
+		msg := "Unauthorized"
+		httpresputils.HttpResponseUnAuth(c, &msg)
+		return
+	}
+	requesterID := userValue.ID
+	requesterRole := userValue.Role
 
-	result, err := h.usecase.List(c.Request.Context(), ListFilter{
+	result, err := h.usecase.List(c.Request.Context(), body.ListFilter{
 		Search:        c.Query("search"),
-		Status:        c.Query("status"),
+		Status:        status,
 		Page:          page,
 		Limit:         limit,
-		RequesterID:   requesterID.(string),
-		RequesterRole: requesterRole.(string),
+		RequesterID:   requesterID,
+		RequesterRole: requesterRole,
 	})
 	if err != nil {
 		msg := err.Error()

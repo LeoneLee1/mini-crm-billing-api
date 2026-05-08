@@ -17,10 +17,13 @@ func (r *repositoryImpl) FindByEmail(ctx context.Context, email string) (*models
 // FindByID implements [Repository].
 func (r *repositoryImpl) FindByID(ctx context.Context, userID string) (*models.UserModel, error) {
 	user, err := userrepo.FindByID(ctx, r.db, userID)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, ErrUserNotFound
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
 	}
-	return user, err
+	return user, nil
 }
 
 // UpdateProfile implements [Repository].

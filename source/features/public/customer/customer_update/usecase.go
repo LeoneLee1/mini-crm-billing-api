@@ -2,19 +2,16 @@ package customerupdate
 
 import (
 	"context"
+	"errors"
 	"mini-crm-billing-api/source/common/models"
+	"mini-crm-billing-api/source/features/public/customer/customer_update/body"
 )
 
-type UpdateRequest struct {
-	Name    *string
-	Email   *string
-	Phone   *string
-	Address *string
-	Status  *string
-}
+var ErrCustomerNotFound = errors.New("Customer not found")
+var ErrForbidden = errors.New("forbidden")
 
 type Usecase interface {
-	Update(ctx context.Context, id string, req UpdateRequest) (*models.CustomerModel, error)
+	Update(ctx context.Context, id string, req body.UpdateRequest, requesterID string, requesterRole string) (*models.CustomerModel, error)
 }
 
 type usecaseImpl struct {

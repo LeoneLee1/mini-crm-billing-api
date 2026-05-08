@@ -2,35 +2,26 @@ package customerupdate
 
 import (
 	"context"
-	"errors"
 	"mini-crm-billing-api/source/common/models"
-
-	"gorm.io/gorm"
+	"mini-crm-billing-api/source/features/public/customer/customer_update/body"
 )
 
-func (u *usecaseImpl) Update(ctx context.Context, id string, req UpdateRequest) (*models.CustomerModel, error) {
+func (u *usecaseImpl) Update(ctx context.Context, id string, req body.UpdateRequest, requesterID string, requesterRole string) (*models.CustomerModel, error) {
 	customer, err := u.repo.FindByID(ctx, id)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("customer not found")
-		}
 		return nil, err
 	}
 
-	if req.Name != nil {
-		customer.Name = *req.Name
+	if requesterRole == string(models.UserRoleStaff) && customer.CreatedBy.String() != requesterID {
+		return nil, ErrForbidden
 	}
-	if req.Email != nil {
-		customer.Email = *req.Email
-	}
-	if req.Phone != nil {
-		customer.Phone = *req.Phone
-	}
-	if req.Address != nil {
-		customer.Address = *req.Address
-	}
-	if req.Status != nil {
-		customer.Status = *req.Status
+
+	customer.Name    = req.Name
+	customer.Email   = req.Email
+	customer.Phone   = req.Phone
+	customer.Address = req.Address
+	if req.Status != "" {
+		customer.Status = req.Status
 	}
 
 	if err := u.repo.UpdateCustomer(ctx, customer); err != nil {

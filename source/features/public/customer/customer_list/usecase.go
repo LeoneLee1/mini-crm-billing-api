@@ -2,28 +2,11 @@ package customerlist
 
 import (
 	"context"
-	"mini-crm-billing-api/source/common/models"
+	"mini-crm-billing-api/source/features/public/customer/customer_list/body"
 )
 
-type ListFilter struct {
-	Search        string
-	Status        string
-	Page          int
-	Limit         int
-	RequesterID   string
-	RequesterRole string
-}
-
-type ListResponse struct {
-	Customer  []models.CustomerModel `json:"customers"`
-	Total     int64                  `json:"total"`
-	Page      int                    `json:"page"`
-	Limit     int                    `json:"limit"`
-	TotalPage int                    `json:"total_page"`
-}
-
 type Usecase interface {
-	List(ctx context.Context, filter ListFilter) (*ListResponse, error)
+	List(ctx context.Context, filter body.ListFilter) (*body.ListResponse, error)
 }
 
 type usecaseImpl struct {

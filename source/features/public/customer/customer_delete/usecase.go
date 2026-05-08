@@ -1,9 +1,14 @@
 package customerdelete
 
-import "context"
+import (
+	"context"
+	"errors"
+)
+
+var ErrCustomerNotFound = errors.New("customer not found")
 
 type Usecase interface {
-	Delete(ctx context.Context, id string) error
+	Delete(ctx context.Context, customerID string) error
 }
 
 type usecaseImpl struct {

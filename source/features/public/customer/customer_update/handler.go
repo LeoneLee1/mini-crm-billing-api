@@ -6,8 +6,6 @@ import (
 )
 
 type Handler struct {
-	db      *gorm.DB
-	repo    Repository
 	usecase Usecase
 }
 
@@ -16,8 +14,6 @@ func NewHandler(db *gorm.DB) gin.HandlerFunc {
 	usecase := injectUsecase(repo)
 
 	handler := Handler{
-		db:      db,
-		repo:    repo,
 		usecase: usecase,
 	}
 
