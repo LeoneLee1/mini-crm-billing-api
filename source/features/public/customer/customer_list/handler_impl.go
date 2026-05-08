@@ -29,14 +29,14 @@ func (h *Handler) Impl(c *gin.Context) {
 		return
 	}
 
-	userValue, exists := jwtutils.GetCurrentUser(c)
+	userID, exists := jwtutils.GetCurrentUserID(c)
 	if !exists {
 		msg := "Unauthorized"
 		httpresputils.HttpResponseUnAuth(c, &msg)
 		return
 	}
-	requesterID := userValue.ID
-	requesterRole := userValue.Role
+	requesterID := userID
+	requesterRole, _ := c.Get("role")
 
 	result, err := h.usecase.List(c.Request.Context(), body.ListFilter{
 		Search:        c.Query("search"),
@@ -44,7 +44,7 @@ func (h *Handler) Impl(c *gin.Context) {
 		Page:          page,
 		Limit:         limit,
 		RequesterID:   requesterID,
-		RequesterRole: requesterRole,
+		RequesterRole: requesterRole.(string),
 	})
 	if err != nil {
 		msg := err.Error()
