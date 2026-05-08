@@ -2,12 +2,18 @@ package productcreate
 
 import (
 	"context"
+	"errors"
+	productcategoryutils "mini-crm-billing-api/source/common/glob_utils/product_category_utils"
 	"mini-crm-billing-api/source/common/models"
 
 	"github.com/google/uuid"
 )
 
 func (u *usecaseImpl) Create(ctx context.Context, createdBy uuid.UUID, req CreateRequest) (*models.ProductModel, error) {
+	if req.Category != "" && !productcategoryutils.IsValidCategory(req.Category) {
+		return nil, errors.New("Invalid category")
+	}
+
 	isActive := true
 	if req.IsActive != nil {
 		isActive = *req.IsActive

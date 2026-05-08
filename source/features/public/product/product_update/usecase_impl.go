@@ -3,6 +3,7 @@ package productupdate
 import (
 	"context"
 	"errors"
+	productcategoryutils "mini-crm-billing-api/source/common/glob_utils/product_category_utils"
 	"mini-crm-billing-api/source/common/models"
 
 	"gorm.io/gorm"
@@ -15,6 +16,10 @@ func (u *usecaseImpl) Update(ctx context.Context, id string, req UpdateRequest) 
 			return nil, errors.New("product not found")
 		}
 		return nil, err
+	}
+
+	if req.Category != nil && !productcategoryutils.IsValidCategory(*req.Category) {
+		return nil, errors.New("Invalid category")
 	}
 
 	if req.Name != nil {
