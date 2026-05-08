@@ -18,12 +18,13 @@ func (h *Handler) Impl(c *gin.Context) {
 		return
 	}
 
-	userInfo, ok := jwtutils.GetCurrentUser(c)
+	userID, ok := jwtutils.GetCurrentUserID(c)
 	if !ok {
 		msg := "Unauthorized"
 		httpresputils.HttpResponseUnAuth(c, &msg)
 		return
 	}
+	userRole, _ := c.Get("role")
 
 	var req body.UpdateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -32,7 +33,7 @@ func (h *Handler) Impl(c *gin.Context) {
 		return
 	}
 
-	customer, err := h.usecase.Update(c.Request.Context(), customerID, req, userInfo.ID, userInfo.Role)
+	customer, err := h.usecase.Update(c.Request.Context(), customerID, req, userID, userRole.(string))
 	if err != nil {
 		msg := err.Error()
 		if errors.Is(err, ErrCustomerNotFound) {
