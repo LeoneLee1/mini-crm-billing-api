@@ -35,7 +35,7 @@ func (u *usecaseImpl) Update(ctx context.Context, id string, req UpdateRequest) 
 		product.Unit = *req.Unit
 	}
 	if req.Category != nil {
-		product.Category = *req.Category
+		product.Category = productcategoryutils.NormalizeCategory(*req.Category)
 	}
 	if req.IsActive != nil {
 		product.IsActive = *req.IsActive

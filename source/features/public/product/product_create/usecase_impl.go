@@ -24,7 +24,7 @@ func (u *usecaseImpl) Create(ctx context.Context, createdBy uuid.UUID, req Creat
 		Description: req.Description,
 		Price:       req.Price,
 		Unit:        req.Unit,
-		Category:    req.Category,
+		Category:    productcategoryutils.NormalizeCategory(req.Category),
 		IsActive:    isActive,
 		CreatedBy:   createdBy,
 	}
